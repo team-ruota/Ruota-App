@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/catering_inquiry.dart';
-import '../services/api_service.dart';
+import '../providers/catering_inquiry_provider.dart';
 
 class CateringInquiryListPage extends StatefulWidget {
   const CateringInquiryListPage({super.key});
@@ -10,22 +11,11 @@ class CateringInquiryListPage extends StatefulWidget {
 }
 
 class _CateringInquiryListPageState extends State<CateringInquiryListPage> {
-  final ApiService _apiService = ApiService();
-  late Future<List<CateringInquiry>> _inquiriesFuture;
-
   @override
   void initState() {
     super.initState();
-    _loadInquiries();
-  }
-
-  void _loadInquiries() {
-    _inquiriesFuture = _apiService.getAllInquiries();
-  }
-
-  Future<void> _refresh() async {
-    setState(() {
-      _loadInquiries();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CateringInquiryProvider>().fetchInquiries();
     });
   }
 
@@ -38,18 +28,19 @@ class _CateringInquiryListPageState extends State<CateringInquiryListPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _refresh,
+            onPressed: () {
+              context.read<CateringInquiryProvider>().refreshInquiries();
+            },
           ),
         ],
       ),
-      body: FutureBuilder<List<CateringInquiry>>(
-        future: _inquiriesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Consumer<CateringInquiryProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (snapshot.hasError) {
+          if (provider.hasError) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -61,14 +52,17 @@ class _CateringInquiryListPageState extends State<CateringInquiryListPage> {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    snapshot.error.toString(),
-                    style: Theme.of(context).textTheme.bodySmall,
-                    textAlign: TextAlign.center,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Text(
+                      provider.errorMessage ?? '알 수 없는 오류',
+                      style: Theme.of(context).textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: _refresh,
+                    onPressed: () => provider.refreshInquiries(),
                     child: const Text('다시 시도'),
                   ),
                 ],
@@ -76,9 +70,7 @@ class _CateringInquiryListPageState extends State<CateringInquiryListPage> {
             );
           }
 
-          final inquiries = snapshot.data ?? [];
-
-          if (inquiries.isEmpty) {
+          if (provider.isEmpty) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -92,15 +84,18 @@ class _CateringInquiryListPageState extends State<CateringInquiryListPage> {
           }
 
           return RefreshIndicator(
-            onRefresh: _refresh,
+            onRefresh: () => provider.refreshInquiries(),
             child: ListView.builder(
-              itemCount: inquiries.length,
+              itemCount: provider.inquiries.length,
               padding: const EdgeInsets.all(8),
               itemBuilder: (context, index) {
-                final inquiry = inquiries[index];
+                final inquiry = provider.inquiries[index];
                 return _InquiryCard(
                   inquiry: inquiry,
-                  onTap: () => _showDetail(inquiry),
+                  onTap: () {
+                    provider.selectInquiry(inquiry);
+                    _showDetail(context, inquiry);
+                  },
                 );
               },
             ),
@@ -110,7 +105,7 @@ class _CateringInquiryListPageState extends State<CateringInquiryListPage> {
     );
   }
 
-  void _showDetail(CateringInquiry inquiry) {
+  void _showDetail(BuildContext context, CateringInquiry inquiry) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -122,9 +117,11 @@ class _CateringInquiryListPageState extends State<CateringInquiryListPage> {
         minChildSize: 0.5,
         maxChildSize: 0.95,
         expand: false,
-        builder: (context, scrollController) => _InquiryDetailSheet(
-          inquiry: inquiry,
-          scrollController: scrollController,
+        builder: (context, scrollController) => Consumer<CateringInquiryProvider>(
+          builder: (context, provider, child) => _InquiryDetailSheet(
+            inquiry: provider.selectedInquiry ?? inquiry,
+            scrollController: scrollController,
+          ),
         ),
       ),
     );

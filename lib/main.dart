@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/catering_inquiry_provider.dart';
 import 'screens/catering_inquiry_list_page.dart';
 
 void main() {
@@ -10,12 +12,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Ruota Coffee',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CateringInquiryProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Ruota Coffee',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
+        ),
+        home: const MainPage(),
       ),
-      home: const MainPage(),
     );
   }
 }
