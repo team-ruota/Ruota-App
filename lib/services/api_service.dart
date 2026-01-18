@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+
 import '../models/catering_inquiry.dart';
 
 class ApiService {
@@ -6,14 +7,15 @@ class ApiService {
 
   final Dio _dio;
 
-  ApiService() : _dio = Dio(BaseOptions(
-    baseUrl: baseUrl,
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 10),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  ));
+  ApiService()
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: baseUrl,
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
 
   Future<List<CateringInquiry>> getAllInquiries() async {
     try {

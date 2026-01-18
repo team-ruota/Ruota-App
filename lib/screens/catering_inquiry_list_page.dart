@@ -314,8 +314,8 @@ class _InquiryDetailSheet extends StatelessWidget {
                 children: [
                   _DetailRow(label: '이름', value: inquiry.bookerInfo.name),
                   _DetailRow(label: '연락처', value: inquiry.bookerInfo.phoneNumber),
-                  if (inquiry.bookerInfo.affiliation != null)
-                    _DetailRow(label: '소속', value: inquiry.bookerInfo.affiliation!),
+                  if (inquiry.bookerInfo.organization != null)
+                    _DetailRow(label: '소속', value: inquiry.bookerInfo.organization!),
                 ],
               ),
               const SizedBox(height: 16),
@@ -337,7 +337,7 @@ class _InquiryDetailSheet extends StatelessWidget {
                   _DetailRow(label: '세트', value: '세트 ${inquiry.menuSelection.menuSet}'),
                   _DetailRow(label: '수량', value: '${inquiry.menuSelection.cupCount}잔'),
                   if (inquiry.desserts.isNotEmpty)
-                    _DetailRow(label: '디저트', value: inquiry.desserts.join(', ')),
+                    _DetailRow(label: '디저트', value: inquiry.dessertsDisplay),
                 ],
               ),
               const SizedBox(height: 16),

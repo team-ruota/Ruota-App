@@ -1,18 +1,18 @@
 class BookerInfo {
   final String name;
-  final String? affiliation;
+  final String? organization;
   final String phoneNumber;
 
   BookerInfo({
     required this.name,
-    this.affiliation,
+    this.organization,
     required this.phoneNumber,
   });
 
   factory BookerInfo.fromJson(Map<String, dynamic> json) {
     return BookerInfo(
       name: json['name'] ?? '',
-      affiliation: json['affiliation'],
+      organization: json['organization'],
       phoneNumber: json['phoneNumber'] ?? '',
     );
   }
@@ -63,6 +63,26 @@ class MenuSelection {
   }
 }
 
+class Dessert {
+  final String name;
+  final int quantity;
+
+  Dessert({
+    required this.name,
+    required this.quantity,
+  });
+
+  factory Dessert.fromJson(Map<String, dynamic> json) {
+    return Dessert(
+      name: json['name'] ?? '',
+      quantity: json['quantity'] ?? 0,
+    );
+  }
+
+  @override
+  String toString() => '$name $quantity개';
+}
+
 class CateringInquiry {
   final int id;
   final String eventDatetime;
@@ -70,12 +90,12 @@ class CateringInquiry {
   final BookerInfo bookerInfo;
   final EventLocation eventLocation;
   final MenuSelection menuSelection;
-  final List<String> desserts;
+  final List<Dessert> desserts;
   final String electricPowerSupport;
   final String referralSource;
   final String? additionalRequests;
-  final String? createdAt;
-  final String? updatedAt;
+  final String? regDateTime;
+  final String? modDateTime;
 
   CateringInquiry({
     required this.id,
@@ -88,8 +108,8 @@ class CateringInquiry {
     required this.electricPowerSupport,
     required this.referralSource,
     this.additionalRequests,
-    this.createdAt,
-    this.updatedAt,
+    this.regDateTime,
+    this.modDateTime,
   });
 
   factory CateringInquiry.fromJson(Map<String, dynamic> json) {
@@ -100,12 +120,15 @@ class CateringInquiry {
       bookerInfo: BookerInfo.fromJson(json['bookerInfo'] ?? {}),
       eventLocation: EventLocation.fromJson(json['eventLocation'] ?? {}),
       menuSelection: MenuSelection.fromJson(json['menuSelection'] ?? {}),
-      desserts: List<String>.from(json['desserts'] ?? []),
+      desserts: (json['desserts'] as List<dynamic>?)
+              ?.map((e) => Dessert.fromJson(e))
+              .toList() ??
+          [],
       electricPowerSupport: json['electricPowerSupport'] ?? '',
       referralSource: json['referralSource'] ?? '',
       additionalRequests: json['additionalRequests'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      regDateTime: json['regDateTime'],
+      modDateTime: json['modDateTime'],
     );
   }
 
@@ -139,5 +162,10 @@ class CateringInquiry {
       default:
         return referralSource;
     }
+  }
+
+  String get dessertsDisplay {
+    if (desserts.isEmpty) return '없음';
+    return desserts.map((d) => d.toString()).join(', ');
   }
 }
