@@ -7,116 +7,125 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Ruota Coffee',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const CoffeeListPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class Coffee {
+  final String name;
+  final String description;
+  final int price;
+  final IconData icon;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  const Coffee({
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.icon,
+  });
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class CoffeeListPage extends StatelessWidget {
+  const CoffeeListPage({super.key});
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  static const List<Coffee> coffeeList = [
+    Coffee(
+      name: '아메리카노',
+      description: '깊고 진한 에스프레소에 물을 더해 부드럽게',
+      price: 4500,
+      icon: Icons.coffee,
+    ),
+    Coffee(
+      name: '카페 라떼',
+      description: '에스프레소와 부드러운 우유의 조화',
+      price: 5000,
+      icon: Icons.local_cafe,
+    ),
+    Coffee(
+      name: '카푸치노',
+      description: '풍성한 우유 거품과 에스프레소',
+      price: 5000,
+      icon: Icons.emoji_food_beverage,
+    ),
+    Coffee(
+      name: '바닐라 라떼',
+      description: '달콤한 바닐라 시럽이 들어간 라떼',
+      price: 5500,
+      icon: Icons.local_cafe,
+    ),
+    Coffee(
+      name: '카라멜 마키아토',
+      description: '카라멜 소스와 바닐라 시럽의 달콤함',
+      price: 5500,
+      icon: Icons.coffee_maker,
+    ),
+    Coffee(
+      name: '콜드브루',
+      description: '차갑게 오랜 시간 우려낸 커피',
+      price: 5000,
+      icon: Icons.water_drop,
+    ),
+    Coffee(
+      name: '에스프레소',
+      description: '진하고 강렬한 커피 원액',
+      price: 3500,
+      icon: Icons.coffee,
+    ),
+    Coffee(
+      name: '아포가토',
+      description: '바닐라 아이스크림 위에 에스프레소',
+      price: 6000,
+      icon: Icons.icecream,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Ruota Coffee'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      body: ListView.builder(
+        itemCount: coffeeList.length,
+        itemBuilder: (context, index) {
+          final coffee = coffeeList[index];
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.brown.shade100,
+                child: Icon(coffee.icon, color: Colors.brown),
+              ),
+              title: Text(
+                coffee.name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(coffee.description),
+              trailing: Text(
+                '${coffee.price}원',
+                style: TextStyle(
+                  color: Colors.brown.shade700,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${coffee.name} 선택됨')),
+                );
+              },
             ),
-          ],
-        ),
+          );
+        },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
