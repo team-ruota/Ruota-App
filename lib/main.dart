@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'providers/catering_inquiry_provider.dart';
-import 'screens/catering_inquiry_list_page.dart';
+
+import 'catering_inquiry/catering_inquiry_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,17 +11,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CateringInquiryProvider()),
-      ],
-      child: MaterialApp(
-        title: 'Ruota Coffee',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
-        ),
-        home: const MainPage(),
+    return MaterialApp(
+      title: 'Ruota Coffee',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
       ),
+      home: const MainPage(),
     );
   }
 }
@@ -39,7 +33,7 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = const [
     CoffeeListPage(),
-    CateringInquiryListPage(),
+    CateringInquiryListScreen(),
   ];
 
   @override
@@ -50,14 +44,8 @@ class _MainPageState extends State<MainPage> {
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.coffee),
-            label: '메뉴',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt),
-            label: '케이터링 문의',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.coffee), label: '메뉴'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: '케이터링 문의'),
         ],
       ),
     );
@@ -163,9 +151,9 @@ class CoffeeListPage extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${coffee.name} 선택됨')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('${coffee.name} 선택됨')));
               },
             ),
           );

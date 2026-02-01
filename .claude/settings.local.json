@@ -4,7 +4,9 @@
       "WebFetch(domain:api.dev.lastindus.com)",
       "WebFetch(domain:lastindus.com)",
       "Bash(flutter pub get:*)",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(tree:*)",
+      "WebFetch(domain:reservation.ruota.coffee)"
     ]
   }
 }
